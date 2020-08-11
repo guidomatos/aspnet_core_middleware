@@ -28,6 +28,7 @@ namespace MiddlewareSample
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMiddleware<EnvironmentMiddleware>();
             app.UseStaticFiles();
 
             app.Use(async (context, next) =>
@@ -39,8 +40,6 @@ namespace MiddlewareSample
 
                 logger.LogInformation($"--==>> Request completed in {myTimer.ElapsedMilliseconds}ms");
             });
-
-            app.UseMiddleware<EnvironmentMiddleware>();
 
             app.Run(async (context) =>
             {
