@@ -20,8 +20,9 @@ namespace MiddlewareSample
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            var logger = loggerFactory.CreateLogger("Middleware demo");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -39,15 +40,20 @@ namespace MiddlewareSample
             //    });
             //});
 
+            app.Use(async (context, next) =>
+            {
+                var myTimer = System.Diagnostics.Stopwatch.StartNew();
+                logger.LogInformation($"--==>> Beginning request in {env.EnvironmentName} environment");
+
+                await next();
+
+                logger.LogInformation($"--==>> Request completed in {myTimer.ElapsedMilliseconds}ms");
+            });
+
             app.Run(async (context) =>
             {
                 await context.Response.WriteAsync("Hello World");
             });
-
-            //app.Run(async (context) =>
-            //{
-            //    await context.Response.WriteAsync("Hello again");
-            //});
 
         }
     }
