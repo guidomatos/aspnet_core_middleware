@@ -30,16 +30,6 @@ namespace MiddlewareSample
 
             app.UseStaticFiles();
 
-            //app.UseRouting();
-
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapGet("/", async (context) =>
-            //    {
-            //        await context.Response.WriteAsync("Hello World!");
-            //    });
-            //});
-
             app.Use(async (context, next) =>
             {
                 var myTimer = System.Diagnostics.Stopwatch.StartNew();
@@ -49,6 +39,8 @@ namespace MiddlewareSample
 
                 logger.LogInformation($"--==>> Request completed in {myTimer.ElapsedMilliseconds}ms");
             });
+
+            app.UseMiddleware<EnvironmentMiddleware>();
 
             app.Run(async (context) =>
             {
