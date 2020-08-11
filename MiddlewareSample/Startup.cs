@@ -41,11 +41,25 @@ namespace MiddlewareSample
                 logger.LogInformation($"--==>> Request completed in {myTimer.ElapsedMilliseconds}ms");
             });
 
+            app.MapWhen(context => context.Request.Headers["User-Agent"].Contains("Apple-iPhone"), iPhoneRoute);
+
+            app.Map("/stuff", a => a.Run(async context =>
+            {
+                context.Response.ContentType = "text/html";
+                await context.Response.WriteAsync("Here is your stuff");
+            }));
+
             app.Run(async (context) =>
             {
-                await context.Response.WriteAsync("Hello World");
+                context.Response.ContentType = "text/html";
+                await context.Response.WriteAsync("Hello World!");
             });
 
+        }
+
+        private void iPhoneRoute(IApplicationBuilder app)
+        {;
+            //throw new NotImplementedException();
         }
     }
 }
